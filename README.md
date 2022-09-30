@@ -26,8 +26,4 @@ This file is generated, by adding the following to your `.platform.app.yaml`:
 
 Example setup: https://github.com/reload/storypal/blob/main/.github/workflows/platformsh-deploy-test.yml
 
-You also must create a `.platform-deploy-status-url` file in your repo, like this:
-
-https://github.com/reload/storypal/blob/main/.github/workflows/.platform-deploy-status-url
-
 You can see the setup of the workflow in (.github/workflows/platformsh-deploy-test.yml)[.github/workflows/platformsh-deploy-test.yml]

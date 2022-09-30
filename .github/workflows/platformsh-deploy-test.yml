@@ -1,4 +1,4 @@
-name: 'Platform.sh - Successful deploy test'
+name: "Platform.sh - Successful deploy test"
 
 on:
   workflow_call:
@@ -6,28 +6,25 @@ on:
       PLATFORMSH_ID:
         required: true
         type: string
-      DEPLOY_STATUS_URL_FILE:
-        required: true
+      DEPLOY_STATUS_PATH:
         type: string
+        description: 'The location of the deploy-status file on the website.'
+        default: '/sites/default/files/deploy-status'
     secrets:
       PLATFORMSH_KEY:
         required: true
 
 jobs:
   platformsh-deploy-test:
+    name: platformsh-deploy-test
     runs-on: ubuntu-latest
     steps:
-      - uses: juliangruber/sleep-action@v1
-        with:
-          time: 3m
-      - uses: actions/checkout@v1
-      - uses: xendk/dais@main
-        with:
-          platform_id: ${{ inputs.PLATFORMSH_ID }}
-          platform_key: ${{ secrets.PLATFORMSH_KEY }}
-          files: ${{ inputs.DEPLOY_STATUS_URL_FILE }}
-      - name: Check latest deploy status
-        run: |
-          STATUS_URL=$(cat ${{ inputs.DEPLOY_STATUS_URL_FILE }})
-          curl "$STATUS_URL" | grep '0'  > /dev/null && echo "PlatformSH silently failed to deploy your PR. Use 'platform log deploy' to find out what went wrong." && exit 2
-          echo "PlatformSH successfully deployed your PR."
+    - uses: reload/action-platformsh-url@main
+      id: platformsh_url
+      with:
+        PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
+        PLATFORMSH_KEY: ${{ secrets.PLATFORMSH_KEY }}
+    - name: Check latest deploy status
+      run: |
+        curl "${{ steps.platformsh_url.outputs.url }}${{ inputs.DEPLOY_STATUS_PATH }}" | grep '0'  > /dev/null && echo "PlatformSH silently failed to deploy your PR. Use 'platform log deploy -p ${{ inputs.PLATFORMSH_ID }} -e pr-${{ github.event.pull_request.number }}' to find out what went wrong." && exit 2
+        echo "PlatformSH successfully deployed your PR."
