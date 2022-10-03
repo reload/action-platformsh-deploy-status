@@ -1,0 +1,32 @@
+name: 'Platform.sh Deploy status'
+description: 'Detect if a compatible platform.sh site has deployed successfully'
+
+inputs:
+  PLATFORMSH_ID:
+    required: true
+    type: string
+  DEPLOY_STATUS_PATH:
+    type: string
+    description: 'The location of the deploy-status file on the website.'
+    default: '/sites/default/files/deploy-status'
+
+secrets:
+  PLATFORMSH_KEY:
+    required: true
+    type: string
+    description: 'Platform.sh API token'
+
+outputs:
+  status:
+    description: 'Status information (Exists if fail)'
+
+runs:
+  using: "composite"
+  steps:
+    - uses: .github/workflows/platformsh-deploy-test.yml
+      with:
+        PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
+        DEPLOY_STATUS_PATH: ${{ inputs.DEPLOY_STATUS_PATH }}
+
+      secrets:
+        PLATFORMSH_KEY: ${{ secrets.PLATFORMSH_KEY }}
