@@ -26,5 +26,5 @@ jobs:
         PLATFORMSH_KEY: ${{ secrets.PLATFORMSH_KEY }}
     - name: Check latest deploy status
       run: |
-        curl "${{ steps.platformsh_url.outputs.url }}${{ inputs.DEPLOY_STATUS_PATH }}" | grep '0'  > /dev/null && echo "PlatformSH silently failed to deploy your PR. Use 'platform log deploy -p ${{ inputs.PLATFORMSH_ID }} -e pr-${{ github.event.pull_request.number }}' to find out what went wrong." && exit 2
+        curl -L "${{ steps.platformsh_url.outputs.url }}${{ inputs.DEPLOY_STATUS_PATH }}" | grep '0'  > /dev/null && echo "PlatformSH silently failed to deploy your PR. Use 'platform log deploy -p ${{ inputs.PLATFORMSH_ID }} -e pr-${{ github.event.pull_request.number }}' to find out what went wrong." && exit 2
         echo "PlatformSH successfully deployed your PR."
