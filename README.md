@@ -1,7 +1,9 @@
-# workflow-platformsh-deploy-status
+# action-platformsh-deploy-status
 
 If anything goes wrong when **deploying** (*NOT building*) a PlatformSH project, the deployer does not fail.
 This is an issue, as it can give you the idea that Drupal config has applied successfully (or a whole host of other issues)
+
+## The deploy-status file
 
 This simple GitHub Action workflow checks if a deploy-status file exists on the PR environment.
 This file is generated, by adding the following to your `.platform.app.yaml`:
@@ -18,12 +20,10 @@ This file is generated, by adding the following to your `.platform.app.yaml`:
     rm -f "$STATUS_FILE"
     echo "0" > "$STATUS_FILE"
     set -e
-    [ DOING YOUR OWN DEPLOY CHANGES, SUCH AS DRUSH DEPLOY]
+    [ .. DOING YOUR OWN DEPLOY CHANGES, SUCH AS DRUSH DEPLOY .. ]
     echo "1" > "$STATUS_FILE"
 ```
 
-## Using the workflow
+In this example, we're putting the file in `/sites/default/files/` as it's a Drupal site.
 
-Example setup: https://github.com/reload/storypal/blob/main/.github/workflows/platformsh-deploy-test.yml
-
-You can see the setup of the workflow in [./.github/workflows/platformsh-deploy-test.yml]()
+The files folder is the only folder that is writable during build.
