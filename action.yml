@@ -1,5 +1,5 @@
 name: 'Platform.sh Deploy status'
-description: 'Detect if a compatible platform.sh site has deployed successfully'
+description: 'Detect if a platform.sh site has deployed successfully'
 
 inputs:
   PLATFORMSH_ID:
@@ -9,6 +9,11 @@ inputs:
     type: string
     description: 'The location of the deploy-status file on the website.'
     default: '/sites/default/files/deploy-status'
+  ENVIRONMENT_NAME:
+    description "Which environment to check against - defaults to 'pr-[PR-number]'"
+    required: false
+    type: string
+    default: "pr-${{ github.event.pull_request.number }}"
 
 secrets:
   PLATFORMSH_KEY:
@@ -23,10 +28,38 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: .github/workflows/platformsh-deploy-test.yml
+    - uses: reload/action-platformsh-url@v1
+      id: platformsh_url
       with:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
-        DEPLOY_STATUS_PATH: ${{ inputs.DEPLOY_STATUS_PATH }}
-
-      secrets:
         PLATFORMSH_KEY: ${{ secrets.PLATFORMSH_KEY }}
+    - name: Check latest deploy status
+      shell: bash
+      run: |
+        DEPLOY_STATUS_URL="${{ steps.platformsh_url.outputs.url }}${{ inputs.DEPLOY_STATUS_PATH }}"
+        CURL_HTTP_STATUS=$(curl -L -s -o /dev/null -w "%{http_code}" $DEPLOY_STATUS_URL)
+
+        if [[ CURL_HTTP_STATUS != "200*" ]]; then \
+          echo "Could not find the deploy-status file at $DEPLOY_STATUS_URL"; \
+          echo "Did you remember to create during the build step in .platform.app.yaml?"; \
+          echo "More info: https://github.com/reload/action-platformsh-deploy-status#the-deploy-status-file"; \
+        fi
+
+        CURL_STATUS=$(curl -L $DEPLOY_STATUS_URL)
+
+        if [[ CURL_HTTP_STATUS != "1" ]]; then \
+          export PLATFORMSH_CLI_NO_INTERACTION=1;
+          export PLATFORM_PROJECT=${{ inputs.PLATFORMSH_ID }};
+          export PLATFORM_BRANCH=${{ inputs.ENVIRONMENT_NAME }};
+          export PLATFORMSH_CLI_TOKEN=${{ inputs.PLATFORMSH_KEY }};
+
+          curl -fsS https://platform.sh/cli/installer | php
+          alias platform='~/.platformsh/bin/platform'
+
+          echo "PlatformSH silently failed to deploy your PR."; \
+          echo "Deploy log:"; \
+          platform log deploy; \
+          exit 2;
+        fi
+
+        echo "PlatformSH successfully deployed your PR."
