@@ -35,7 +35,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: reload/action-platformsh-url@v2.0.2
+    - uses: reload/action-platformsh-url@main
       id: platformsh_url
       with:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
