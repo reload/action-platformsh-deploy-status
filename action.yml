@@ -27,6 +27,11 @@ inputs:
     required: false
     type: string
 
+  DEPLOY_WAIT_TIME:
+    description: "How long should we maximum wait for the deploy to work? If the branch doesnt exist in the PlatformSH GIT Remote, this is how long the action will take. Actually inactive environments get detected instantly. Default: 500 seconds."
+    default: 500
+    required: false
+    type: integer
 
 outputs:
   status:
@@ -40,6 +45,9 @@ runs:
       with:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
         PLATFORMSH_KEY: ${{ inputs.PLATFORMSH_KEY }}
+        ENVIRONMENT_NAME: ${{ inputs.ENVIRONMENT_NAME }}
+        DEPLOY_WAIT_TIME: ${{ inputs.DEPLOY_WAIT_TIME }}
+
     - name: Check latest deploy status
       shell: bash
       run: |
@@ -68,5 +76,7 @@ runs:
 
           exit 2; \
         fi
+
+        echo "::set-output name=url::$(echo $DEPLOY_STATUS_URL)"
 
         echo "PlatformSH successfully deployed your PR."
