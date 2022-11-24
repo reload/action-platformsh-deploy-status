@@ -27,3 +27,11 @@ This file is generated, by adding the following to your `.platform.app.yaml`:
 In this example, we're putting the file in `/sites/default/files/` as it's a Drupal site.
 
 The files folder is the only folder that is writable during build.
+
+## Getting the ready URL
+
+This action relies on another action, for getting the environment URL.
+
+https://github.com/reload/action-platformsh-url
+
+Most of the inputs here, are needed for that action.
