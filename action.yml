@@ -77,6 +77,6 @@ runs:
           exit 2; \
         fi
 
-        echo "::set-output name=url::$(echo $DEPLOY_STATUS_URL)"
+        echo "url=$URL" >> $DEPLOY_STATUS_URL
 
         echo "PlatformSH successfully deployed your PR."
