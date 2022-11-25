@@ -32,6 +32,6 @@ The files folder is the only folder that is writable during build.
 
 This action relies on another action, for getting the environment URL.
 
-https://github.com/reload/action-platformsh-url
+https://github.com/rasben/action-platformsh-url
 
 Most of the inputs here, are needed for that action.
