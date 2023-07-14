@@ -52,8 +52,8 @@ runs:
       shell: bash
       run: |
         set +e
-
-        DEPLOY_STATUS_URL="${{ steps.platformsh_url.outputs.url }}${{ inputs.DEPLOY_STATUS_PATH }}"
+        URL="${{ steps.platformsh_url.outputs.url }}"
+        DEPLOY_STATUS_URL="$URL${{ inputs.DEPLOY_STATUS_PATH }}"
 
         echo "Checking $DEPLOY_STATUS_URL .."
 
