@@ -34,10 +34,9 @@ inputs:
     type: integer
 
 outputs:
-  status:
-    description: 'Status information (Exists if fail)'
   url:
     description: "The ready-to-connect URL"
+    value: ${{ steps.platformsh_url.outputs.url }}
 
 runs:
   using: "composite"
@@ -78,8 +77,5 @@ runs:
 
           exit 2; \
         fi
-
-        echo "url=$URL" >> $DEPLOY_STATUS_URL
-        echo "url=$URL" >> $GITHUB_OUTPUT
 
         echo "PlatformSH successfully deployed your PR."
