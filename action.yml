@@ -36,6 +36,8 @@ inputs:
 outputs:
   status:
     description: 'Status information (Exists if fail)'
+  url:
+    description: "The ready-to-connect URL"
 
 runs:
   using: "composite"
