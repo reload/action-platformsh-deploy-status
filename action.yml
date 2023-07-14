@@ -78,5 +78,6 @@ runs:
         fi
 
         echo "url=$URL" >> $DEPLOY_STATUS_URL
+        echo "url=$URL" >> $GITHUB_OUTPUT
 
         echo "PlatformSH successfully deployed your PR."
