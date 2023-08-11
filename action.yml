@@ -33,6 +33,12 @@ inputs:
     required: false
     type: integer
 
+  ALLOW_CANCEL_CRON:
+    description: "Can we cancel on-going crons, to speed up deployment? default: 0"
+    default: 0
+    required: false
+    type: integer
+
 outputs:
   status:
     description: 'Status information (Exists if fail)'
@@ -47,6 +53,7 @@ runs:
         PLATFORMSH_KEY: ${{ inputs.PLATFORMSH_KEY }}
         ENVIRONMENT_NAME: ${{ inputs.ENVIRONMENT_NAME }}
         DEPLOY_WAIT_TIME: ${{ inputs.DEPLOY_WAIT_TIME }}
+        ALLOW_CANCEL_CRON: ${{ inputs.ALLOW_CANCEL_CRON }}
 
     - name: Check latest deploy status
       shell: bash
