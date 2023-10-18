@@ -27,9 +27,9 @@ inputs:
     required: false
     type: string
 
-  DEPLOY_WAIT_TIME:
-    description: "How long should we maximum wait for the deploy to work? If the branch doesnt exist in the PlatformSH GIT Remote, this is how long the action will take. Actually inactive environments get detected instantly. Default: 1000 seconds."
-    default: 1000
+  PSH_DETECTION_WAIT:
+    description: "How long should we maximum wait for PSH to detect the push? If the branch doesnt exist in the PlatformSH GIT Remote, this is how long the action will take. Actually inactive environments get detected instantly. Default: 120 seconds."
+    default: 120
     required: false
     type: integer
 
@@ -53,7 +53,7 @@ runs:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
         PLATFORMSH_KEY: ${{ inputs.PLATFORMSH_KEY }}
         ENVIRONMENT_NAME: ${{ inputs.ENVIRONMENT_NAME }}
-        DEPLOY_WAIT_TIME: ${{ inputs.DEPLOY_WAIT_TIME }}
+        PSH_DETECTION_WAIT: ${{ inputs.PSH_DETECTION_WAIT }}
         ALLOW_CANCEL_CRON: ${{ inputs.ALLOW_CANCEL_CRON }}
 
     - name: Check latest deploy status
