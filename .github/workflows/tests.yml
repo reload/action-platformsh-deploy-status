@@ -14,7 +14,7 @@ jobs:
         with:
           PLATFORMSH_ID: ${{ secrets.TEST_PLATFORMSH_ID }}
           PLATFORMSH_KEY: ${{ secrets.TEST_PLATFORMSH_KEY }}
-          ENVIRONMENT_NAME: main
+          ENVIRONMENT_NAME: master
 
   fail-deploy-test:
     name: "Testing on a environment that has a failed deployment"
@@ -23,24 +23,23 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: ./
-        id: inactive_url
+        id: failed_url
         continue-on-error: true
         with:
           PLATFORMSH_ID: ${{ secrets.TEST_PLATFORMSH_ID }}
           PLATFORMSH_KEY: ${{ secrets.TEST_PLATFORMSH_KEY }}
-          ENVIRONMENT_NAME: main
+          ENVIRONMENT_NAME: master
           DEPLOY_STATUS_PATH: '/sites/default/files/mock-deploy-status'
 
       - name: Check for failure
-        if: ${{ steps.inactive_url.outputs.url }}
+        if: ${{ steps.failed_url.outcome != 'failure' }}
         uses: actions/github-script@v3
         with:
           script: |
             core.setFailed('The test did not fail as expected.')
 
-
   missing-url-test:
-    name: "Testing on a environment that that has no URL"
+    name: "Testing on a environment that does not exist"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -51,11 +50,10 @@ jobs:
         with:
           PLATFORMSH_ID: ${{ secrets.TEST_PLATFORMSH_ID }}
           PLATFORMSH_KEY: ${{ secrets.TEST_PLATFORMSH_KEY }}
-          ENVIRONMENT_NAME: main
-          DEPLOY_STATUS_PATH: '/sites/default/files/xxx-deploy-status'
+          ENVIRONMENT_NAME: nonexistent
 
       - name: Check for failure
-        if: ${{ steps.missing_url.outputs.url }}
+        if: ${{ steps.missing_url.outcome != 'failure' }}
         uses: actions/github-script@v3
         with:
           script: |
