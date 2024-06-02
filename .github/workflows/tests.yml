@@ -8,7 +8,7 @@ jobs:
     name: "Testing on a branch that has an active, deployed environment"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         with:
@@ -20,7 +20,7 @@ jobs:
     name: "Testing on a environment that has a failed deployment"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: failed_url
@@ -29,11 +29,11 @@ jobs:
           PLATFORMSH_ID: ${{ secrets.TEST_PLATFORMSH_ID }}
           PLATFORMSH_KEY: ${{ secrets.TEST_PLATFORMSH_KEY }}
           ENVIRONMENT_NAME: master
-          DEPLOY_STATUS_PATH: '/sites/default/files/mock-deploy-status'
+          DEPLOY_STATUS_PATH: "/sites/default/files/mock-deploy-status"
 
       - name: Check for failure
         if: ${{ steps.failed_url.outcome != 'failure' }}
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('The test did not fail as expected.')
@@ -42,7 +42,7 @@ jobs:
     name: "Testing on a environment that does not exist"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - uses: ./
         id: missing_url
@@ -54,7 +54,7 @@ jobs:
 
       - name: Check for failure
         if: ${{ steps.missing_url.outcome != 'failure' }}
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         with:
           script: |
             core.setFailed('The test did not fail as expected.')
