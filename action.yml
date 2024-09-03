@@ -61,6 +61,7 @@ runs:
         ENVIRONMENT_NAME: ${{ inputs.ENVIRONMENT_NAME }}
         PSH_DETECTION_WAIT: ${{ inputs.PSH_DETECTION_WAIT }}
         ALLOW_CANCEL_CRON: ${{ inputs.ALLOW_CANCEL_CRON }}
+        ACTIVITY_TYPES: ${{ inputs.ACTIVITY_TYPES }}
 
     - name: Check latest deploy status
       shell: bash
