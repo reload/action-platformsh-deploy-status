@@ -34,8 +34,8 @@ inputs:
     type: string
 
   PSH_DETECTION_WAIT:
-    description: "How long should we maximum wait for PSH to detect the push? If the branch doesnt exist in the PlatformSH GIT Remote, this is how long the action will take. Actually inactive environments get detected instantly. Default: 120 seconds."
-    default: 120
+    description: "How long should we maximum wait for PSH to detect the push? If the branch doesnt exist in the PlatformSH GIT Remote, this is how long the action will take. Actually inactive environments get detected instantly. Default: 30 seconds."
+    default: 30
     required: false
     type: integer
 
@@ -49,6 +49,12 @@ outputs:
   url:
     description: "The ready-to-connect URL"
     value: ${{ steps.platformsh_url.outputs.url }}
+  state:
+    description: "The state of the deployment, parseable by GitHub Deployment Status"
+    value: "pending"
+  state_description:
+    description: "Short description of the state, such as error message."
+    value: "The deployment is pending."
 
 runs:
   using: "composite"
@@ -75,21 +81,33 @@ runs:
         CURL_HTTP_STATUS=$(curl -L -s -o /dev/null -w "%{http_code}" $DEPLOY_STATUS_URL)
 
         if [[ "$CURL_HTTP_STATUS" != "200" ]]; then \
-          echo "Could not find the deploy-status file at $DEPLOY_STATUS_URL"; \
+          STATE_DESCRIPTION="Could not find the deploy-status file at $DEPLOY_STATUS_URL"; \
+
+          echo "$STATE_DESCRIPTION"; \
           echo "Did you remember to create during the build step in .platform.app.yaml?"; \
           echo "More info: https://github.com/reload/action-platformsh-deploy-status#the-deploy-status-file"; \
+          echo "state=error" >> $GITHUB_OUTPUT; \
+          echo "state_description=error" >> $GITHUB_OUTPUT; \
+
           exit 2; \
         fi
 
         CURL_STATUS=$(curl -L -s $DEPLOY_STATUS_URL)
 
         if [[ "$CURL_STATUS" != "1" ]]; then \
-          echo "PlatformSH silently failed to deploy your PR."; \
+          STATE_DESCRIPTION="PlatformSH silently failed to deploy your PR."; \
+
+          echo "$STATE_DESCRIPTION"; \
           echo ""; \
           echo "You can view the deploy log with:"; \
           echo "$ platform log deploy -e ${{ inputs.ENVIRONMENT_NAME }} -p ${{ inputs.PLATFORMSH_ID }}"; \
+          echo "state=failure" >> $GITHUB_OUTPUT; \
 
           exit 2; \
         fi
 
-        echo "PlatformSH successfully deployed your PR."
+        STATE_DESCRIPTION="PlatformSH successfully deployed your PR."
+  
+        echo "$STATE_DESCRIPTION"
+        echo "state=success" >> $GITHUB_OUTPUT
+        echo "state_description=$STATE_DESCRIPTION" >> $GITHUB_OUTPUT
