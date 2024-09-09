@@ -51,10 +51,10 @@ outputs:
     value: ${{ steps.platformsh_url.outputs.url }}
   state:
     description: "The state of the deployment, parseable by GitHub Deployment Status"
-    value: "pending"
+    value: ${{ steps.platformsh_deploy_status.outputs.state }}
   state_description:
     description: "Short description of the state, such as error message."
-    value: "The deployment is pending."
+    value: ${{ steps.platformsh_deploy_status.outputs.state_description }}
 
 runs:
   using: "composite"
@@ -70,6 +70,7 @@ runs:
         ACTIVITY_TYPES: ${{ inputs.ACTIVITY_TYPES }}
 
     - name: Check latest deploy status
+      id: platformsh_deploy_status
       shell: bash
       run: |
         set +e
