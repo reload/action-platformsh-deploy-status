@@ -61,6 +61,7 @@ runs:
   steps:
     - uses: reload/action-platformsh-url@main
       id: platformsh_url
+      shell: bash
       with:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
         PLATFORMSH_KEY: ${{ inputs.PLATFORMSH_KEY }}
