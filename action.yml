@@ -24,7 +24,7 @@ inputs:
   ACTIVITY_TYPES:
     description: "Comma-seperated types of deployments to wait for. Default: push - See types here: https://docs.platform.sh/integrations/activity/reference.html#environment-activity-types"
     default: "push"
-    required: true
+    required: false
     type: string
 
   DEPLOY_STATUS_PATH:
@@ -61,7 +61,6 @@ runs:
   steps:
     - uses: reload/action-platformsh-url@main
       id: platformsh_url
-      shell: bash
       with:
         PLATFORMSH_ID: ${{ inputs.PLATFORMSH_ID }}
         PLATFORMSH_KEY: ${{ inputs.PLATFORMSH_KEY }}
